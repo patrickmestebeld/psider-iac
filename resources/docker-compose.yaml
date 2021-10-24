@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  nginx:
+    image: nginx:1.20.0
+    volumes:
+      - /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - /opt/nginx/psider.crt:/etc/ssl/certs/psider.crt:ro
+      - /opt/nginx/psider.decrypted.key:/etc/ssl/certs/psider.decrypted.key:ro
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - psider_local
+  psidercms:
+    image: psat01/psider
+    volumes:
+      - images_data:/App/wwwroot/images/:rw
+    ports:
+      - 8080:80
+    networks:
+      - psider_local
+  psidercmsui:
+    image: psat01/psider-cms-ui
+    ports:
+      - 4200:4200
+    networks:
+      - psider_local
+  psiderweb:
+    image: psat01/psider-web
+    ports:
+      - 3000:3000
+    volumes:
+      - images_data:/app/public/images/:ro
+    networks:
+      - psider_local
+
+networks:
+  psider_local:
+    name: psider-local
+
+volumes:
+  images_data:

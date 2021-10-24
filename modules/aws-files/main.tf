@@ -3,13 +3,13 @@ resource "aws_s3_bucket" "file_bucket" {
   acl    = "private"
 
   tags = {
-    Name        = var.prefix
+    Name = var.prefix
   }
 }
 
 resource "aws_s3_bucket_object" "files" {
   for_each = var.sources
-  
+
   acl    = "private"
   bucket = aws_s3_bucket.file_bucket.id
 

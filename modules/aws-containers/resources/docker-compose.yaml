@@ -1,6 +1,0 @@
-version: "3.9"
-services:
-  adminer:
-    image: adminer
-    ports:
-      - 80:8080

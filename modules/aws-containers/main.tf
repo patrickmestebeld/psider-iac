@@ -111,18 +111,17 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
 
 resource "aws_instance" "web" {
   ami                         = "ami-05cd35b907b4ffe77"
-  instance_type               = "t2.micro"
+  instance_type               = "t2.medium"
   associate_public_ip_address = true
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.psider_security_group.id]
   key_name                    = aws_key_pair.deployer_key.key_name
   user_data                   = templatefile("${path.module}/resources/cloud_config.tpl.yaml", {
-    b64_docker_compose_config = filebase64("${path.module}/resources/docker-compose.yaml")
-    db_host                   = var.db_host
-    db_port                   = var.db_port
-    db_name                   = var.db_name
-    db_username               = var.db_username
-    db_password               = var.db_password
+    db_host     = var.db_host
+    db_port     = var.db_port
+    db_name     = var.db_name
+    db_username = var.db_username
+    db_password = var.db_password
   })
 
   iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name

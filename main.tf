@@ -1,7 +1,15 @@
 locals {
-  prefix         = "psider"
-  psider_db_port = 5432
-  psider_db_name = "psider_db"
+  prefix  = "psider"
+  db_port = 5432
+  db_name = "psider_db"
+
+  sources = {
+    "docker-compose.yaml"        = "${path.cwd}/resources/docker-compose.yaml"
+    "nginx/nginx.conf"           = "${path.cwd}/resources/nginx/nginx.conf"
+    "nginx/psider.crt"           = "${path.cwd}/resources/nginx/psider.crt"
+    "nginx/psider.decrypted.key" = "${path.cwd}/resources/nginx/psider.decrypted.key"
+    "postgres/seed.sql"          = "${path.cwd}/resources/postgres/seed.sql"
+  }
 }
 
 module "psider_networking" {
@@ -13,18 +21,16 @@ module "psider_bucket" {
   source = "./modules/aws-files"
   prefix = local.prefix
 
-  sources = {
-    "seed.sql" = "${path.cwd}/resources/seed.sql"
-  }
+  sources = local.sources
 }
 
 module "psider_db" {
   source = "./modules/aws-db"
   prefix = local.prefix
 
-  db_name     = local.psider_db_name
-  db_username = var.psider_db_username
-  db_password = var.psider_db_password
+  db_name     = local.db_name
+  db_username = var.db_username
+  db_password = var.db_password
   db_port     = 5432
 
   vpc_id          = module.psider_networking.vpc_id
@@ -38,11 +44,11 @@ module "psider_containers" {
 
   vpc_id    = module.psider_networking.vpc_id
   subnet_id = module.psider_networking.vpc_public_subnet_ids[0]
-
+  
   db_host     = module.psider_db.address
   db_port     = module.psider_db.port
-  db_name     = local.psider_db_name
-  db_username = var.psider_db_username
-  db_password = var.psider_db_password
+  db_name     = local.db_name
+  db_username = var.db_username
+  db_password = var.db_password
 }
 
