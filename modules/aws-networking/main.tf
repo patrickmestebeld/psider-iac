@@ -12,6 +12,15 @@ resource "aws_vpc" "default" {
   }
 }
 
+resource "aws_internet_gateway" "psider_gateway" {
+  vpc_id = aws_vpc.default.id
+
+  tags = {
+    Name = "${var.prefix}_gateway"
+    Group = var.prefix
+  }
+}
+
 resource "aws_subnet" "subnet_public" {
   count                   = 1
   vpc_id                  = aws_vpc.default.id
@@ -37,14 +46,18 @@ resource "aws_subnet" "subnet_private" {
   }
 }
 
-resource "aws_internet_gateway" "psider_gateway" {
+resource "aws_route_table" "route_table" {
   vpc_id = aws_vpc.default.id
-  //  vpc_id = aws_vpc.psider_vpc.id
-
-  tags = {
-    Name = "${var.prefix}_gateway"
-    Group = var.prefix
+  
+  route {
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.psider_gateway.id
   }
+}
+
+resource "aws_route_table_association" "route_table_association" {
+  subnet_id = aws_subnet.subnet_public[0].id
+  route_table_id = aws_route_table.route_table.id
 }
 
 resource "aws_eip" "psider_eip" {

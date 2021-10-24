@@ -39,9 +39,8 @@ resource "aws_security_group" "db_security_group" {
 
 resource "aws_db_subnet_group" "db_subnet_group" {
   name        = "${var.prefix}_db_subnet_group"
-  description = "Database isntance subnet group"
+  description = "Database instance subnet group"
   subnet_ids  = var.subnet_ids
-  //  subnet_ids = aws_subnet.${var.prefix}_subnet_private[*].id
 
   tags = {
     Name  = "${var.prefix}_security_group"
@@ -50,20 +49,21 @@ resource "aws_db_subnet_group" "db_subnet_group" {
 }
 
 resource "aws_db_instance" "db_instance" {
-  name                = "${var.prefix}_db_instance"
   identifier          = "${var.prefix}-db-instance-01"
   allocated_storage   = 20
   engine              = "postgres"
   engine_version      = "12.8"
   instance_class      = "db.t2.micro"
-  username            = var.db_username
-  password            = var.db_password
   skip_final_snapshot = true
+
+  name     = var.db_name
+  port     = var.db_port
+  username = var.db_username
+  password = var.db_password
 
   vpc_security_group_ids = aws_security_group.db_security_group.*.id
   db_subnet_group_name   = aws_db_subnet_group.db_subnet_group.name
   publicly_accessible    = false
-  port                   = var.db_port
 
   tags = {
     Name  = "${var.prefix}_db_instance"
