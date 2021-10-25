@@ -3,10 +3,13 @@ package_upgrade: true
 packages:
   - docker
   - postgresql
+write_files:
+  - encoding: b64
+    content: ${b64_docker_compose_config}
+    path: /opt/docker-compose.yaml
 runcmd:
   - mkdir /opt/postgres
   - mkdir /opt/nginx
-  - aws s3 cp s3://psider-2021-10-24/docker-compose.yaml /opt/docker-compose.yaml
   - aws s3 cp s3://psider-2021-10-24/nginx/nginx.conf /opt/nginx/nginx.conf
   - aws s3 cp s3://psider-2021-10-24/nginx/psider.crt /opt/nginx/psider.crt
   - aws s3 cp s3://psider-2021-10-24/nginx/psider.decrypted.key /opt/nginx/psider.decrypted.key

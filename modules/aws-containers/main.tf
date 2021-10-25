@@ -10,6 +10,14 @@ resource "aws_security_group" "psider_security_group" {
     protocol    = "tcp"
     cidr_blocks = ["84.82.33.208/32"]
   }
+  
+  ingress {
+    description = "Allow SSH Inbound Traffic From Work"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["195.35.227.201/32"]
+  }
 
   ingress {
     description = "Allow HTTP Inbound Traffic"
@@ -28,13 +36,29 @@ resource "aws_security_group" "psider_security_group" {
   }
 
   ingress {
-    description = "Allow Adminer Inbound Traffic"
-    from_port   = 8432
-    to_port     = 8432
+    description = "Allow HTTP Inbound Traffic"
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+    description = "Allow Api Test Inbound Traffic"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
+  ingress {
+    description = "Allow Api Test Inbound Traffic"
+    from_port   = 4200
+    to_port     = 4200
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  
   egress {
     description = "Allow All Outbound Traffic"
     from_port   = 0
@@ -111,17 +135,24 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
 
 resource "aws_instance" "web" {
   ami                         = "ami-05cd35b907b4ffe77"
-  instance_type               = "t2.medium"
+  instance_type               = "t2.small"
   associate_public_ip_address = true
   subnet_id                   = var.subnet_id
   vpc_security_group_ids      = [aws_security_group.psider_security_group.id]
   key_name                    = aws_key_pair.deployer_key.key_name
   user_data                   = templatefile("${path.module}/resources/cloud_config.tpl.yaml", {
-    db_host     = var.db_host
-    db_port     = var.db_port
-    db_name     = var.db_name
-    db_username = var.db_username
-    db_password = var.db_password
+    b64_docker_compose_config = base64encode(templatefile("${path.module}/resources/docker-compose.yaml", {
+      db_host     = var.db_host
+      db_port     = var.db_port
+      db_name     = var.db_name
+      db_username = var.db_username
+      db_password = var.db_password
+    }))
+    db_host                   = var.db_host
+    db_port                   = var.db_port
+    db_name                   = var.db_name
+    db_username               = var.db_username
+    db_password               = var.db_password
   })
 
   iam_instance_profile = aws_iam_instance_profile.ec2_instance_profile.name

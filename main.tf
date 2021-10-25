@@ -4,7 +4,6 @@ locals {
   db_name = "psider_db"
 
   sources = {
-    "docker-compose.yaml"        = "${path.cwd}/resources/docker-compose.yaml"
     "nginx/nginx.conf"           = "${path.cwd}/resources/nginx/nginx.conf"
     "nginx/psider.crt"           = "${path.cwd}/resources/nginx/psider.crt"
     "nginx/psider.decrypted.key" = "${path.cwd}/resources/nginx/psider.decrypted.key"
@@ -44,7 +43,7 @@ module "psider_containers" {
 
   vpc_id    = module.psider_networking.vpc_id
   subnet_id = module.psider_networking.vpc_public_subnet_ids[0]
-  
+
   db_host     = module.psider_db.address
   db_port     = module.psider_db.port
   db_name     = local.db_name
