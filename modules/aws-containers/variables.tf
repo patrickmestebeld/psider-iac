@@ -13,6 +13,11 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "eip_id" {
+  description = "Elastic IP ID"
+  type        = string
+}
+
 variable "db_host" {
   description = "database host"
   type        = string

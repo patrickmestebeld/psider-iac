@@ -133,6 +133,11 @@ resource "aws_iam_instance_profile" "ec2_instance_profile" {
   role = aws_iam_role.ec2_instance_role.name
 }
 
+resource "aws_eip_association" "eip_assoc" {
+  instance_id   = aws_instance.web.id
+  allocation_id = var.eip_id
+}
+
 resource "aws_instance" "web" {
   ami                         = "ami-05cd35b907b4ffe77"
   instance_type               = "t2.small"
