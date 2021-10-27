@@ -1,17 +1,3 @@
-locals {
-  prefix      = "psider"
-  db_port     = 5432
-  db_name     = "psider_db"
-  domain_name = "deepbluesystem.com"
-
-  sources = {
-    "nginx/nginx.conf"           = "${path.cwd}/resources/nginx/nginx.conf"
-    "nginx/psider.crt"           = "${path.cwd}/resources/nginx/psider.crt"
-    "nginx/psider.decrypted.key" = "${path.cwd}/resources/nginx/psider.decrypted.key"
-    "postgres/seed.sql"          = "${path.cwd}/resources/postgres/seed.sql"
-  }
-}
-
 module "networking" {
   source      = "./modules/aws-networking"
   prefix      = local.prefix
@@ -52,12 +38,4 @@ module "containers" {
   db_name     = local.db_name
   db_username = var.db_username
   db_password = var.db_password
-}
-
-module "cloudflare" {
-  source = "./modules/cloudflare"
-  prefix = local.prefix
-
-  domain_name = local.domain_name
-  public_ip   = module.networking.public_ip
 }
