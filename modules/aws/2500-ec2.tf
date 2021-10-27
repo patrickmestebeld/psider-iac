@@ -29,7 +29,7 @@ module "ec2_instance" {
   name = "web-instance"
 
   ami           = "ami-05cd35b907b4ffe77"
-  instance_type = "t2.small"
+  instance_type = "t2.medium"
   key_name      = aws_key_pair.instance_ssh_key.key_name
   monitoring    = true
 

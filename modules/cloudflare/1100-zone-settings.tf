@@ -8,7 +8,7 @@ resource "cloudflare_zone_settings_override" "cloudflare" {
     minify {
       css  = "on"
       js   = "on"
-      html = "off"
+      html = "on"
     }
     security_header {
       enabled = true
