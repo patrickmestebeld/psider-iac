@@ -6,7 +6,7 @@ variable "prefix" {
 variable "cloudflare_zone_id" {
   description = "Cloudflare's zone_id"
   type        = string
-  default     = "4e055c912c34ef636c46ce5e994f4499"
+  default     = "86b706b64f7f22b0ae2a0f99b9f9e130"
 }
 
 variable "domain_name" {

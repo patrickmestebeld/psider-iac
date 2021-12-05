@@ -1,4 +1,4 @@
 locals {
-  prefix      = "deepblue"
-  domain_name = "deepbluesystem.com"
+  prefix      = "blue"
+  domain_name = "celestial.blue"
 }

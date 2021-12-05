@@ -1,5 +1,5 @@
 locals {
-  subdomains = ["www", "cms", "demo", "preview"]
+  subdomains = ["www", "cms", "demo"]
 }
 
 resource "cloudflare_record" "www" {

@@ -5,8 +5,8 @@ services:
     volumes:
       - /opt/nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       - /opt/nginx/includes/proxy.conf:/etc/nginx/includes/proxy.conf:ro
-      - /opt/nginx/certs/cloudflare.crt:/etc/ssl/certs/cloudflare.crt:ro
-      - /opt/nginx/certs/cloudflare.key:/etc/ssl/certs/cloudflare.key:ro
+      - /opt/nginx/certs/celestial.blue.crt:/etc/ssl/certs/celestial.blue.crt:ro
+      - /opt/nginx/certs/celestial.blue.key:/etc/ssl/certs/celestial.blue.key:ro
     ports:
       - 80:80
       - 443:443
@@ -16,7 +16,6 @@ services:
       - psidercms
       - psidercmsui
       - webdemo
-      - webpreview
 
   psidercms:
     image: psat01/psider
@@ -26,6 +25,7 @@ services:
     #      - 8080:80
     environment:
       "ConnectionStrings:DefaultConnection": "Host=${db_props.host};Port=${db_props.port};Database=${db_props.name};Username=${db_props.username};Password=${db_props.password}"
+      "SeedUserPW": "SuperSafePassw0rd!"
       "ASPNETCORE_ENVIRONMENT": "Development"
     networks:
       - psider_local # port 80 is exposed
@@ -33,9 +33,11 @@ services:
   psidercmsui:
     image: psat01/psider-cms-ui
     #    ports:
-    #      - 4200:4200
+    #      - 4200:80
     networks:
       - psider_local # port 4200 is exposed
+    depends_on:
+      - psidercms
 
   webdemo:
     image: psat01/psider-web
@@ -45,16 +47,9 @@ services:
       - images_data:/app/public/images/:ro
     networks:
       - psider_local
-
-  webpreview:
-    image: psat01/psider-web
-    #    ports:
-    #      - 3001:3000
-    volumes:
-      - images_data:/app/public/images/:ro
-    entrypoint: "next dev"
-    networks:
-      - psider_local
+    depends_on:
+      - psidercms
+      - psidercmsui
 
 networks:
   psider_local:
